@@ -1,6 +1,8 @@
 package com.github.lassana.releases.fragment;
 
-import android.content.ContentUris;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -12,6 +14,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
@@ -33,6 +36,10 @@ public class TagsFragment extends ListFragment {
 
     private static final String EXTRA_REPOSITORY_ID = "extra_repository_id";
 
+    public static interface TagsCallback {
+        void requestTagOverview(long tagId);
+    }
+
     private static final int LIST_LOADER_ID = 2;
     private static final int REPOSITORY_LOADER_ID = 3;
 
@@ -43,11 +50,12 @@ public class TagsFragment extends ListFragment {
 
     private static final String[] REPOSITORY_PROJECTION = {
             GithubContract.Repositories._ID,
-            GithubContract.Repositories.USER_NAME,
+            GithubContract.Repositories.OWNER,
             GithubContract.Repositories.REPOSITORY_NAME};
 
     private CursorAdapter mAdapter;
     private ViewSwitcher mViewSwitcher;
+    private TagsCallback mTagsCallback;
 
     private LoaderManager.LoaderCallbacks<Cursor> listLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
@@ -89,6 +97,15 @@ public class TagsFragment extends ListFragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (!(activity instanceof TagsCallback)) {
+            throw new IllegalStateException("Activity should be instance of TagsFragment$TagsCallback");
+        }
+        mTagsCallback = (TagsCallback) activity;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_tags, container, false);
     }
@@ -109,6 +126,12 @@ public class TagsFragment extends ListFragment {
                 0);
         DraggablePanelLayout.enableInternalScrolling(getListView());
         getListView().setAdapter(mAdapter);
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mTagsCallback.requestTagOverview(id);
+            }
+        });
         getActivity().getSupportLoaderManager().initLoader(LIST_LOADER_ID, null, listLoaderCallbacks);
         loadTags();
     }
@@ -123,22 +146,31 @@ public class TagsFragment extends ListFragment {
                 null);
         Cursor cursor = loader.loadInBackground();
         cursor.moveToFirst();
-        int ownerIndex = cursor.getColumnIndex(GithubContract.Repositories.USER_NAME);
+        int ownerIndex = cursor.getColumnIndex(GithubContract.Repositories.OWNER);
         int repositoryIndex = cursor.getColumnIndex(GithubContract.Repositories.REPOSITORY_NAME);
         String owner = cursor.getString(ownerIndex);
         String repositoryStr = cursor.getString(repositoryIndex);
+        cursor.close();
 
         Repository repository = new Repository(owner, repositoryStr);
         Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 List<Tag> list = Repository.getTags(response);
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                contentResolver.delete(
+                        GithubContract.Tags.CONTENT_URI,
+                        GithubContract.Tags.REPOSITORY_ID + " = ?",
+                        new String[]{Long.toString(mRepositoryId)});
                 for (Tag tag : list) {
-                    getActivity().getContentResolver().delete(
-                            GithubContract.Tags.CONTENT_URI,
-                            GithubContract.Tags.REPOSITORY_ID + " = ?",
-                            new String[]{Long.toString(mRepositoryId)});
-                    // TODO: put tags into db
+                    ContentValues cv = new ContentValues();
+                    cv.put(GithubContract.Tags.REPOSITORY_ID, mRepositoryId);
+                    cv.put(GithubContract.Tags.TAG_NAME, tag.getName());
+                    cv.put(GithubContract.Tags.TARBALL_URL, tag.getTarballUrl());
+                    cv.put(GithubContract.Tags.ZIPBALL_URL, tag.getZipballUrl());
+                    cv.put(GithubContract.Tags.COMMIT_SHA, tag.getCommit().getSha());
+                    cv.put(GithubContract.Tags.COMMIT_URL, tag.getCommit().getUrl());
+                    contentResolver.insert(GithubContract.Tags.CONTENT_URI, cv);
                 }
             }
         };
@@ -150,4 +182,5 @@ public class TagsFragment extends ListFragment {
         };
         repository.getTags(listener, errorListener);
     }
+
 }

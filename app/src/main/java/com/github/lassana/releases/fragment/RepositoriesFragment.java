@@ -33,7 +33,7 @@ public class RepositoriesFragment extends ListFragment {
 
     private static final String[] PROJECTION = {
             GithubContract.Repositories._ID,
-            GithubContract.Repositories.USER_NAME,
+            GithubContract.Repositories.OWNER,
             GithubContract.Repositories.REPOSITORY_NAME};
 
     private RepositoriesCallback mRepositoriesCallback;
@@ -90,7 +90,7 @@ public class RepositoriesFragment extends ListFragment {
                 getActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[]{GithubContract.Repositories.USER_NAME, GithubContract.Repositories.REPOSITORY_NAME},
+                new String[]{GithubContract.Repositories.REPOSITORY_NAME, GithubContract.Repositories.OWNER},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 0);
         DraggablePanelLayout.enableInternalScrolling(getListView());

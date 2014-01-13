@@ -14,7 +14,7 @@ public final class GithubContract {
     public static final Uri AUTHORITY_URI = Uri.parse("content://" + AUTHORITY);
 
     public static interface RepositoriesColumns {
-        String USER_NAME = "user_name";
+        String OWNER = "user_name";
         String REPOSITORY_NAME = "repository_name";
     }
 
@@ -23,6 +23,8 @@ public final class GithubContract {
         String TAG_NAME = "tag_name";
         String ZIPBALL_URL = "zipball_url";
         String TARBALL_URL = "tarball_url";
+        String COMMIT_SHA = "commit_sha";
+        String COMMIT_URL = "commit_url";
     }
 
     public static class Repositories implements BaseColumns, RepositoriesColumns {

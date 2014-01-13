@@ -9,23 +9,21 @@ import com.google.gson.annotations.SerializedName;
 public class ApiError {
 
     @SerializedName("message")
-    private String mMessage;
+    private final String mMessage;
     @SerializedName("documentation_url")
-    private String mDocumentationUrl;
+    private final String mDocumentationUrl;
+
+    public ApiError(String message, String documentationUrl) {
+        mMessage = message;
+        mDocumentationUrl = documentationUrl;
+    }
 
     public String getMessage() {
         return mMessage;
-    }
-
-    public void setMessage(String message) {
-        mMessage = message;
     }
 
     public String getDocumentationUrl() {
         return mDocumentationUrl;
     }
 
-    public void setDocumentationUrl(String documentationUrl) {
-        mDocumentationUrl = documentationUrl;
-    }
 }

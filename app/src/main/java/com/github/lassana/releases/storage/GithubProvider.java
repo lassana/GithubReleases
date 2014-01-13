@@ -55,7 +55,7 @@ public class GithubProvider extends ContentProvider {
             String createRepositories =
                     "create table " + TABLE_REPOSITORIES + " (" +
                             GithubContract.Repositories._ID + " integer primary key autoincrement, " +
-                            GithubContract.Repositories.USER_NAME + " text, " +
+                            GithubContract.Repositories.OWNER + " text, " +
                             GithubContract.Repositories.REPOSITORY_NAME + " text" +
                             ")";
             String createTags = "create table " + TABLE_TAGS + " (" +
@@ -63,13 +63,18 @@ public class GithubProvider extends ContentProvider {
                     GithubContract.Tags.REPOSITORY_ID + " integer, " +
                     GithubContract.Tags.TAG_NAME + " text, " +
                     GithubContract.Tags.ZIPBALL_URL + " text, " +
-                    GithubContract.Tags.TARBALL_URL + " text" +
+                    GithubContract.Tags.TARBALL_URL + " text, " +
+                    GithubContract.Tags.COMMIT_SHA + " text, " +
+                    GithubContract.Tags.COMMIT_URL + " text" +
                     ")";
             String[] sqls = {createRepositories, createTags};
             for(String sql : sqls ) {
                 db.execSQL(sql);
             }
-
+            ContentValues cv = new ContentValues();
+            cv.put(GithubContract.Repositories.OWNER, "lassana");
+            cv.put(GithubContract.Repositories.REPOSITORY_NAME, "listview-anim-sorting");
+            db.insert(TABLE_REPOSITORIES, null, cv);
         }
 
         @Override
