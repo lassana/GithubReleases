@@ -93,6 +93,7 @@ public class GithubProvider extends ContentProvider {
             case PATH_TAGS: {
                 Cursor cursor = mDatabaseHelper.getReadableDatabase().query(TABLE_TAGS, projection, selection, selectionArgs, null, null, sortOrder);
                 cursor.setNotificationUri(getContext().getContentResolver(), GithubContract.Tags.CONTENT_URI);
+                return cursor;
             }
             default:
                 return null;
