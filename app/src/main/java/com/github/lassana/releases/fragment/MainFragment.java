@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -15,19 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.github.lassana.releases.R;
-import com.github.lassana.releases.github.api.Repository;
-import com.github.lassana.releases.github.model.Tag;
 import com.github.lassana.releases.storage.model.RepositoriesContract;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.

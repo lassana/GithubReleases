@@ -47,7 +47,8 @@ public class Repository {
     }
 
     public static List<Tag> getTags(String response) {
-        Type listType = new TypeToken<List<Tag>>() {}.getType();
+        Type listType = new TypeToken<List<Tag>>() {
+        }.getType();
         return new Gson().fromJson(response, listType);
     }
 

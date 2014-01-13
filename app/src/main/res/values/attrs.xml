@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="DraggablePanelLayout">
+        <attr name="bottom_panel_height" format="dimension"/>
+        <attr name="parallax_factor" format="float"/>
+        <attr name="shadow_drawable" format="reference"/>
+        <attr name="prevent_touch_events" format="boolean"/>
+    </declare-styleable>
+
+</resources>
