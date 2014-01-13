@@ -1,7 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:id="@+id/container"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.github.lassana.releases.activity.MainActivity"
-             tools:ignore="MergeRootFrame"/>
+<com.github.lassana.releases.view.DraggablePanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:dpl="http://schemas.android.com/apk/res-auto"
+    android:id="@android:id/primary"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    dpl:bottom_panel_height="128dp"
+    dpl:parallax_factor="0.5"
+    dpl:shadow_drawable="@drawable/shadow_np"
+    dpl:prevent_touch_events="false"
+    tools:context="com.github.lassana.releases.activity.MainActivity">
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</com.github.lassana.releases.view.DraggablePanelLayout>
