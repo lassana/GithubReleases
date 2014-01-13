@@ -15,13 +15,10 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.github.lassana.releases.R;
-
-import java.util.ArrayList;
 
 /**
  * @author lassana

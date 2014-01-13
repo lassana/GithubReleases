@@ -69,6 +69,7 @@ public class GithubProvider extends ContentProvider {
             for(String sql : sqls ) {
                 db.execSQL(sql);
             }
+
         }
 
         @Override

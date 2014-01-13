@@ -1,6 +1,7 @@
 package com.github.lassana.releases.activity;
 
 import android.content.ContentValues;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 
@@ -28,11 +29,11 @@ public class MainActivity extends ActionBarActivity
         ContentValues values = new ContentValues();
         values.put(GithubContract.Repositories.USER_NAME, "owner");
         values.put(GithubContract.Repositories.REPOSITORY_NAME, "repository");
-        getContentResolver().insert(GithubContract.Repositories.CONTENT_URI, values);
+        Uri uri = getContentResolver().insert(GithubContract.Repositories.CONTENT_URI, values);
 
         values = new ContentValues();
         values.put(GithubContract.Tags.TAG_NAME, "v0.1");
-        values.put(GithubContract.Tags.REPOSITORY_ID, 1L);
+        values.put(GithubContract.Tags.REPOSITORY_ID, Long.parseLong(uri.getLastPathSegment()));
         values.put(GithubContract.Tags.TARBALL_URL, "http://tarball");
         values.put(GithubContract.Tags.ZIPBALL_URL, "http://zipball");
         getContentResolver().insert(GithubContract.Tags.CONTENT_URI, values);

@@ -4,5 +4,6 @@
     <string name="app_name">GithubReleases</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="toast_bad_repository">Repository looks bad</string>
 
 </resources>
