@@ -5,5 +5,10 @@
     <string name="button_add_repository">Add repository</string>
     <string name="action_settings">Settings</string>
     <string name="toast_bad_repository">Repository looks bad</string>
+    <string name="title_tag_overview">Tag overview</string>
+    <string name="tv_tags">Tag: </string>
+    <string name="tv_zipball">Zipball: </string>
+    <string name="tv_tarball">Tarball: </string>
+    <string name="tv_commit">Commit: </string>
 
 </resources>

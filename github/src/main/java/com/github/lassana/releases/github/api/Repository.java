@@ -41,8 +41,7 @@ public class Repository {
      */
     public void getTags(Response.Listener<String> listener,
                         Response.ErrorListener errorListener) {
-        StringRequest request = new StringRequest(buildTagsUrl(mOwner, mRepository),
-                listener, errorListener);
+        StringRequest request = new StringRequest(buildTagsUrl(), listener, errorListener);
         VolleyAppController.getInstance().addToRequestQueue(request);
     }
 
@@ -52,11 +51,19 @@ public class Repository {
         return new Gson().fromJson(response, listType);
     }
 
-    private String buildTagsUrl(String owner, String repository) {
+    public String buildWebUrl() {
+        return "https://github.com/"
+                + "repos/"
+                + mOwner + "/"
+                + mRepository + "/"
+                + "tags";
+    }
+
+    private String buildTagsUrl() {
         return "https://api.github.com/"
                 + "repos/"
-                + owner + "/"
-                + repository + "/"
+                + mOwner + "/"
+                + mRepository + "/"
                 + "tags";
     }
 

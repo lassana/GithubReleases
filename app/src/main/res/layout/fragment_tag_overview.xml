@@ -15,6 +15,7 @@
         android:orientation="vertical">
 
         <include
+            android:id="@+id/layout_repository"
             layout="@android:layout/two_line_list_item"/>
 
         <TableLayout
@@ -30,7 +31,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tag:"/>
+                    android:textStyle="bold"
+                    android:text="@string/tv_tags"/>
 
                 <TextView
                     android:id="@+id/tv_tag"
@@ -46,12 +48,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Zipball:"/>
+                    android:textStyle="bold"
+                    android:text="@string/tv_zipball"/>
 
                 <TextView
                     android:id="@+id/tv_zipball"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:autoLink="web"
+                    android:linksClickable="true"
+                    android:textColorLink="@android:color/holo_blue_dark"/>
             </TableRow>
 
             <TableRow
@@ -62,12 +68,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tarball:"/>
+                    android:textStyle="bold"
+                    android:text="@string/tv_tarball"/>
 
                 <TextView
                     android:id="@+id/tv_tarball"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:autoLink="web"
+                    android:linksClickable="true"
+                    android:textColorLink="@android:color/holo_blue_dark"/>
             </TableRow>
 
             <TableRow
@@ -78,11 +88,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Commit:"/>
+                    android:textStyle="bold"
+                    android:text="@string/tv_commit"/>
 
                 <TextView
                     android:id="@+id/tv_commit"
                     android:textColor="@android:color/holo_blue_dark"
+                    android:singleLine="false"
+                    android:maxLines="2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </TableRow>

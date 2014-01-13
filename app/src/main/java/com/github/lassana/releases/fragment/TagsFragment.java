@@ -85,7 +85,7 @@ public class TagsFragment extends ListFragment {
 
     private long mRepositoryId;
 
-    private TagsFragment() {
+    public TagsFragment() {
     }
 
     public static TagsFragment getInstance(long repositoryId) {
@@ -113,7 +113,8 @@ public class TagsFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRepositoryId = getArguments().getLong(EXTRA_REPOSITORY_ID);
+        Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
+        mRepositoryId = bundle.getLong(EXTRA_REPOSITORY_ID);
 
         mViewSwitcher = (ViewSwitcher) view.findViewById(android.R.id.primary);
 
@@ -134,6 +135,12 @@ public class TagsFragment extends ListFragment {
         });
         getActivity().getSupportLoaderManager().initLoader(LIST_LOADER_ID, null, listLoaderCallbacks);
         loadTags();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(EXTRA_REPOSITORY_ID, mRepositoryId);
     }
 
     private void loadTags() {
