@@ -12,11 +12,13 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.lassana.releases.R;
 import com.github.lassana.releases.storage.model.GithubContract;
+import com.github.lassana.releases.view.DraggablePanelLayout;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -26,6 +28,7 @@ public class MainFragment extends ListFragment {
     private static final String TAG = "MainFragment";
 
     private static final int LOADER_ID = 1;
+    
     private static final String[] PROJECTION = {
             GithubContract.Repositories._ID,
             GithubContract.Repositories.USER_NAME,
@@ -69,16 +72,7 @@ public class MainFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(android.R.id.button1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ContentValues repository = new ContentValues();
-                repository.put(GithubContract.Repositories.USER_NAME, "lassana");
-                repository.put(GithubContract.Repositories.REPOSITORY_NAME, "listview-anim-sorting");
-                Uri uri = getActivity().getApplicationContext().getContentResolver().insert(GithubContract.Repositories.CONTENT_URI, repository);
-                Log.d(TAG, uri.toString());
-            }
-        });
+
         mAdapter = new SimpleCursorAdapter(
                 getActivity(),
                 android.R.layout.simple_list_item_2,
@@ -86,8 +80,10 @@ public class MainFragment extends ListFragment {
                 new String[]{GithubContract.Repositories.USER_NAME, GithubContract.Repositories.REPOSITORY_NAME},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 0);
+        DraggablePanelLayout.enableInternalScrolling(getListView());
         getListView().setAdapter(mAdapter);
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, loaderCallbacks);
+
     }
 
 

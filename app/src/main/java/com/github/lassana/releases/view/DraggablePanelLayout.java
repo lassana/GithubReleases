@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
@@ -26,7 +28,7 @@ import java.util.ArrayList;
  * @since 1/13/14
  */
 @SuppressWarnings("ConstantConditions")
-public class DraggablePanelLayout extends FrameLayout {
+public class DraggablePanelLayout extends FrameLayout implements View.OnTouchListener {
 
     private static final float PARALLAX_FACTOR = 0.2f;
     public static final int DEFAULT_PEEK_HEIGHT = 100;
@@ -140,7 +142,7 @@ public class DraggablePanelLayout extends FrameLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        if ( mPreventTouchEvents ) {
+        if (mPreventTouchEvents) {
             return super.onInterceptTouchEvent(event);
         }
         switch (event.getAction()) {
@@ -294,6 +296,11 @@ public class DraggablePanelLayout extends FrameLayout {
         set.start();
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return onTouchEvent(event);
+    }
+
     private class MyAnimListener implements Animator.AnimatorListener {
 
         int oldLayerTypeOne;
@@ -369,16 +376,24 @@ public class DraggablePanelLayout extends FrameLayout {
         setWillNotDraw(!mWillDrawShadow);
     }
 
-
-    private View findView(float x, float y, ArrayList<View> targets) {
-        final int count = targets.size();
-        for (final View target : targets) {
-            if (target.getRight() > x && target.getTop() < y && target.getBottom() > y && target.getLeft() < x) {
-                return target;
+    public static void enableInternalScrolling(final ViewGroup viewGroup) {
+        viewGroup.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        viewGroup.requestDisallowInterceptTouchEvent(true);
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        viewGroup.requestDisallowInterceptTouchEvent(false);
+                        break;
+                    default:
+                        break;
+                }
+                return false;
             }
-        }
-        return null;
+        });
     }
-
 
 }
