@@ -1,6 +1,7 @@
 package com.github.lassana.releases.storage;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
@@ -96,8 +97,9 @@ public class GithubProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         switch (sUriMatcher.match(uri)) {
             case PATH_REPOSITORIES: {
-                mDatabaseHelper.getWritableDatabase().insert(TABLE_REPOSITORIES, null, values);
+                long id = mDatabaseHelper.getWritableDatabase().insert(TABLE_REPOSITORIES, null, values);
                 getContext().getContentResolver().notifyChange(RepositoriesContract.Repositories.CONTENT_URI, null);
+                return ContentUris.withAppendedId(uri, id);
             }
             default:
                 return null;
