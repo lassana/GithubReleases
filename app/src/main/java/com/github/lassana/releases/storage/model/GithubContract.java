@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  * @author lassana
  * @since 1/13/14
  */
-public final class RepositoriesContract {
+public final class GithubContract {
 
     public static final String AUTHORITY = "com.github.lassana.releases";
 
@@ -18,8 +18,21 @@ public final class RepositoriesContract {
         String REPOSITORY_NAME = "repository_name";
     }
 
+    public static interface TagsColumns {
+        String REPOSITORY_ID = "repository_id";
+        String TAG_NAME = "tag_name";
+        String ZIPBALL_URL = "zipball_url";
+        String TARBALL_URL = "tarball_url";
+    }
+
     public static class Repositories implements BaseColumns, RepositoriesColumns {
         public static final String CONTENT_PATH = "repositories";
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, CONTENT_PATH);
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + AUTHORITY + "." + CONTENT_PATH;
+    }
+
+    public static class Tags implements BaseColumns, TagsColumns {
+        public static final String CONTENT_PATH = "tags";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, CONTENT_PATH);
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd." + AUTHORITY + "." + CONTENT_PATH;
     }

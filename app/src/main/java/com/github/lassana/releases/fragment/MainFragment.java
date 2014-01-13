@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.lassana.releases.R;
-import com.github.lassana.releases.storage.model.RepositoriesContract;
+import com.github.lassana.releases.storage.model.GithubContract;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -27,9 +27,9 @@ public class MainFragment extends ListFragment {
 
     private static final int LOADER_ID = 1;
     private static final String[] PROJECTION = {
-            RepositoriesContract.Repositories._ID,
-            RepositoriesContract.Repositories.USER_NAME,
-            RepositoriesContract.Repositories.REPOSITORY_NAME};
+            GithubContract.Repositories._ID,
+            GithubContract.Repositories.USER_NAME,
+            GithubContract.Repositories.REPOSITORY_NAME};
 
     private CursorAdapter mAdapter;
 
@@ -38,7 +38,7 @@ public class MainFragment extends ListFragment {
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
             return new CursorLoader(
                     getActivity(),
-                    RepositoriesContract.Repositories.CONTENT_URI,
+                    GithubContract.Repositories.CONTENT_URI,
                     PROJECTION,
                     null,
                     null,
@@ -73,9 +73,9 @@ public class MainFragment extends ListFragment {
             @Override
             public void onClick(View v) {
                 ContentValues repository = new ContentValues();
-                repository.put(RepositoriesContract.Repositories.USER_NAME, "lassana");
-                repository.put(RepositoriesContract.Repositories.REPOSITORY_NAME, "listview-anim-sorting");
-                Uri uri = getActivity().getApplicationContext().getContentResolver().insert(RepositoriesContract.Repositories.CONTENT_URI, repository);
+                repository.put(GithubContract.Repositories.USER_NAME, "lassana");
+                repository.put(GithubContract.Repositories.REPOSITORY_NAME, "listview-anim-sorting");
+                Uri uri = getActivity().getApplicationContext().getContentResolver().insert(GithubContract.Repositories.CONTENT_URI, repository);
                 Log.d(TAG, uri.toString());
             }
         });
@@ -83,7 +83,7 @@ public class MainFragment extends ListFragment {
                 getActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[]{RepositoriesContract.Repositories.USER_NAME, RepositoriesContract.Repositories.REPOSITORY_NAME},
+                new String[]{GithubContract.Repositories.USER_NAME, GithubContract.Repositories.REPOSITORY_NAME},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 0);
         getListView().setAdapter(mAdapter);

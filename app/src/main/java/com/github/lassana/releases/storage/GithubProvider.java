@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
-import com.github.lassana.releases.storage.model.RepositoriesContract;
+import com.github.lassana.releases.storage.model.GithubContract;
 
 /**
  * @author lassana
@@ -22,18 +22,21 @@ public class GithubProvider extends ContentProvider {
     private static final String TAG = "GithubProvider";
 
     private static final String TABLE_REPOSITORIES = "repositories";
+    private static final String TABLE_TAGS = "tags";
 
     private static final String DB_NAME = "github.db";
     private static final int DB_VERSION = 1;
 
     private static final int PATH_ROOT = 0;
     private static final int PATH_REPOSITORIES = 1;
+    private static final int PATH_TAGS = 2;
 
     private static final UriMatcher sUriMatcher;
 
     static {
         sUriMatcher = new UriMatcher(PATH_ROOT);
-        sUriMatcher.addURI(RepositoriesContract.AUTHORITY, RepositoriesContract.Repositories.CONTENT_PATH, PATH_REPOSITORIES);
+        sUriMatcher.addURI(GithubContract.AUTHORITY, GithubContract.Repositories.CONTENT_PATH, PATH_REPOSITORIES);
+        sUriMatcher.addURI(GithubContract.AUTHORITY, GithubContract.Tags.CONTENT_PATH, PATH_TAGS);
     }
 
     private DatabaseHelper mDatabaseHelper;
@@ -49,18 +52,27 @@ public class GithubProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            String sql =
+            String createRepositories =
                     "create table " + TABLE_REPOSITORIES + " (" +
-                            RepositoriesContract.Repositories._ID + " integer primary key autoincrement, " +
-                            RepositoriesContract.Repositories.USER_NAME + " text, " +
-                            RepositoriesContract.Repositories.REPOSITORY_NAME + " text" +
+                            GithubContract.Repositories._ID + " integer primary key autoincrement, " +
+                            GithubContract.Repositories.USER_NAME + " text, " +
+                            GithubContract.Repositories.REPOSITORY_NAME + " text" +
                             ")";
-            db.execSQL(sql);
+            String createTags = "create table " + TABLE_TAGS + " (" +
+                    GithubContract.Tags._ID + " integer primary key autoincrement, " +
+                    GithubContract.Tags.REPOSITORY_ID + " integer, " +
+                    GithubContract.Tags.TAG_NAME + " text, " +
+                    GithubContract.Tags.ZIPBALL_URL + " text, " +
+                    GithubContract.Tags.TARBALL_URL + " text" +
+                    ")";
+            String[] sqls = {createRepositories, createTags};
+            for(String sql : sqls ) {
+                db.execSQL(sql);
+            }
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
         }
     }
 
@@ -75,8 +87,12 @@ public class GithubProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PATH_REPOSITORIES: {
                 Cursor cursor = mDatabaseHelper.getReadableDatabase().query(TABLE_REPOSITORIES, projection, selection, selectionArgs, null, null, sortOrder);
-                cursor.setNotificationUri(getContext().getContentResolver(), RepositoriesContract.Repositories.CONTENT_URI);
+                cursor.setNotificationUri(getContext().getContentResolver(), GithubContract.Repositories.CONTENT_URI);
                 return cursor;
+            }
+            case PATH_TAGS: {
+                Cursor cursor = mDatabaseHelper.getReadableDatabase().query(TABLE_TAGS, projection, selection, selectionArgs, null, null, sortOrder);
+                cursor.setNotificationUri(getContext().getContentResolver(), GithubContract.Tags.CONTENT_URI);
             }
             default:
                 return null;
@@ -87,7 +103,9 @@ public class GithubProvider extends ContentProvider {
     public String getType(Uri uri) {
         switch (sUriMatcher.match(uri)) {
             case PATH_REPOSITORIES:
-                return RepositoriesContract.Repositories.CONTENT_TYPE;
+                return GithubContract.Repositories.CONTENT_TYPE;
+            case PATH_TAGS:
+                return GithubContract.Tags.CONTENT_TYPE;
             default:
                 return null;
         }
@@ -98,7 +116,12 @@ public class GithubProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PATH_REPOSITORIES: {
                 long id = mDatabaseHelper.getWritableDatabase().insert(TABLE_REPOSITORIES, null, values);
-                getContext().getContentResolver().notifyChange(RepositoriesContract.Repositories.CONTENT_URI, null);
+                getContext().getContentResolver().notifyChange(GithubContract.Repositories.CONTENT_URI, null);
+                return ContentUris.withAppendedId(uri, id);
+            }
+            case PATH_TAGS: {
+                long id = mDatabaseHelper.getWritableDatabase().insert(TABLE_TAGS, null, values);
+                getContext().getContentResolver().notifyChange(GithubContract.Tags.CONTENT_URI, null);
                 return ContentUris.withAppendedId(uri, id);
             }
             default:
@@ -111,6 +134,8 @@ public class GithubProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PATH_REPOSITORIES:
                 return mDatabaseHelper.getWritableDatabase().delete(TABLE_REPOSITORIES, selection, selectionArgs);
+            case PATH_TAGS:
+                return mDatabaseHelper.getWritableDatabase().delete(TABLE_TAGS, selection, selectionArgs);
             default:
                 return 0;
         }
@@ -121,6 +146,8 @@ public class GithubProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PATH_REPOSITORIES:
                 return mDatabaseHelper.getWritableDatabase().update(TABLE_REPOSITORIES, values, selection, selectionArgs);
+            case PATH_TAGS:
+                return mDatabaseHelper.getWritableDatabase().update(TABLE_TAGS, values, selection, selectionArgs);
             default:
                 return 0;
         }
