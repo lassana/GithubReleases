@@ -1,8 +1,8 @@
-package com.github.lassana.releases.github;
+package com.github.lassana.releases.github.api;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
+import com.github.lassana.releases.github.VolleyAppController;
 
 /**
  * @author lassana
@@ -10,12 +10,10 @@ import com.android.volley.toolbox.StringRequest;
  */
 public class Repository {
 
-    private final RequestQueue mRequestQueue;
     private final String mOwner;
     private final String mRepository;
 
-    public Repository(RequestQueue requestQueue, String owner, String repository) {
-        mRequestQueue = requestQueue;
+    public Repository(String owner, String repository) {
         mOwner = owner;
         mRepository = repository;
     }
@@ -24,7 +22,7 @@ public class Repository {
                                Response.ErrorListener errorListener) {
         StringRequest request = new StringRequest(buildTagsUrl(mOwner, mRepository),
                 listener, errorListener);
-        mRequestQueue.add(request);
+        VolleyAppController.getInstance().addToRequestQueue(request);
     }
 
     private String buildTagsUrl(String owner, String repository) {
@@ -32,7 +30,7 @@ public class Repository {
                 + "repos/"
                 + owner + "/"
                 + "repository" + "/"
-                + "tags/";
+                + "tags";
     }
 
 }
