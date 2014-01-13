@@ -24,6 +24,21 @@ public class Repository {
         mRepository = repository;
     }
 
+    /**
+     * Creates list tags request.<p>
+     * Example
+     * <pre>{@code
+     * Repository repository = new Repository("lassana", "listview-anim-sorting");
+     * Response.Listener<String> listener = new Response.Listener<String>() {
+     *      @Override
+     *      public void onResponse(String response) {
+     *          List<Tag> tags = Repository.getTags(response);
+     *          Log.d(TAG, "onResponse: " + tags);
+     *      }
+     * };
+     * repository.getTags(listener, errorListener);
+     * }</pre>
+     */
     public void getTags(Response.Listener<String> listener,
                         Response.ErrorListener errorListener) {
         StringRequest request = new StringRequest(buildTagsUrl(mOwner, mRepository),

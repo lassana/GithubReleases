@@ -40,28 +40,10 @@ public class MainFragment extends Fragment {
         view.findViewById(android.R.id.button1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeRequest();
             }
         });
     }
 
-    public void makeRequest() {
-        Repository repository = new Repository("lassana", "listview-anim-sorting");
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "onErrorResponse: " + error);
-            }
-        };
-        Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                List<Tag> tags = Repository.getTags(response);
-                Log.d(TAG, "onResponse: " + tags);
-            }
-        };
-        repository.getTags(listener, errorListener);
-    }
 
 
 }
