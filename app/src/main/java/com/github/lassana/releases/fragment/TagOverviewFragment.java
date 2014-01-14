@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.lassana.releases.R;
-import com.github.lassana.releases.github.api.Repository;
+import com.github.lassana.releases.net.api.Repository;
 import com.github.lassana.releases.storage.model.GithubContract;
 
 /**

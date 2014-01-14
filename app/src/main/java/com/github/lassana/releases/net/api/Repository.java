@@ -1,9 +1,9 @@
-package com.github.lassana.releases.github.api;
+package com.github.lassana.releases.net.api;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
-import com.github.lassana.releases.github.VolleyAppController;
-import com.github.lassana.releases.github.model.Tag;
+import com.github.lassana.releases.VolleyAppController;
+import com.github.lassana.releases.net.model.Tag;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -36,13 +36,14 @@ public class Repository {
      *          Log.d(TAG, "onResponse: " + tags);
      *      }
      * };
-     * repository.getTags(listener, errorListener);
+     * repository.getTags(listener, errorListener, tag);
      * }</pre>
      */
     public void getTags(Response.Listener<String> listener,
-                        Response.ErrorListener errorListener) {
+                        Response.ErrorListener errorListener,
+                        String tag) {
         StringRequest request = new StringRequest(buildTagsUrl(), listener, errorListener);
-        VolleyAppController.getInstance().addToRequestQueue(request);
+        VolleyAppController.getInstance().addToRequestQueue(request, tag);
     }
 
     public static List<Tag> getTags(String response) {

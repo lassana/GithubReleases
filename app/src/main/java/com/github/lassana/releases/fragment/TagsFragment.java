@@ -17,13 +17,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-import android.widget.ViewSwitcher;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.github.lassana.releases.R;
-import com.github.lassana.releases.github.api.Repository;
-import com.github.lassana.releases.github.model.Tag;
+import com.github.lassana.releases.VolleyAppController;
+import com.github.lassana.releases.net.api.Repository;
+import com.github.lassana.releases.net.model.Tag;
 import com.github.lassana.releases.storage.model.GithubContract;
 import com.github.lassana.releases.view.DraggablePanelLayout;
 
@@ -36,6 +36,7 @@ import java.util.List;
 public class TagsFragment extends ListFragment {
 
     private static final String EXTRA_REPOSITORY_ID = "extra_repository_id";
+    private static final String TAG_LOAD_TAGS = "tag_load_tags";
 
     public static interface TagsCallback {
         void requestTagOverview(long tagId);
@@ -151,6 +152,7 @@ public class TagsFragment extends ListFragment {
     public void onDestroyView() {
         super.onDestroyView();
         getActivity().getSupportLoaderManager().destroyLoader(LIST_LOADER_ID);
+        VolleyAppController.getInstance().cancelPendingRequest(TAG_LOAD_TAGS);
     }
 
     private void loadTags() {
@@ -197,7 +199,7 @@ public class TagsFragment extends ListFragment {
                 Toast.makeText(getActivity(), R.string.toast_bad_repository, Toast.LENGTH_LONG).show();
             }
         };
-        repository.getTags(listener, errorListener);
+        repository.getTags(listener, errorListener, TAG_LOAD_TAGS);
     }
 
 }

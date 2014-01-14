@@ -1,4 +1,4 @@
-package com.github.lassana.releases.github;
+package com.github.lassana.releases;
 
 import android.app.Application;
 import android.text.TextUtils;

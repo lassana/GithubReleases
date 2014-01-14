@@ -1,4 +1,4 @@
-package com.github.lassana.releases.github.model;
+package com.github.lassana.releases.net.model;
 
 import com.google.gson.annotations.SerializedName;
 
