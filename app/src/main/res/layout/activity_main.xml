@@ -5,7 +5,7 @@
     android:id="@android:id/primary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    dpl:bottom_panel_height="128dp"
+    dpl:bottom_panel_height="64dp"
     dpl:parallax_factor="0.5"
     dpl:shadow_drawable="@drawable/shadow_np"
     dpl:prevent_touch_events="false"
@@ -13,6 +13,7 @@
 
     <FrameLayout
         android:id="@+id/content"
+        android:layout_marginBottom="64dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

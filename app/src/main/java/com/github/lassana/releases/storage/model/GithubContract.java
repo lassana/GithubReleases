@@ -14,7 +14,7 @@ public final class GithubContract {
     public static final Uri AUTHORITY_URI = Uri.parse("content://" + AUTHORITY);
 
     public static interface RepositoriesColumns {
-        String OWNER = "user_name";
+        String OWNER = "owner";
         String REPOSITORY_NAME = "repository_name";
     }
 

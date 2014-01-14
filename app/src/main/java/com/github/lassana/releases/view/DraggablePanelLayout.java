@@ -133,7 +133,11 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
         mSlidingPanel = getChildAt(1);
         if (!mOpened) {
             int panelMeasuredHeight = mSlidingPanel.getMeasuredHeight();
-            mSlidingPanel.layout(left, bottom - mBottomPanelPeekHeight, right, bottom - mBottomPanelPeekHeight + panelMeasuredHeight);
+            mSlidingPanel.layout(
+                    left,
+                    bottom - mBottomPanelPeekHeight,
+                    right,
+                    bottom - mBottomPanelPeekHeight + panelMeasuredHeight);
         }
     }
 
@@ -176,37 +180,43 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
     public boolean onTouchEvent(MotionEvent event) {
         obtainVelocityTracker();
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            startDragging(event);
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            if (mTouching) {
-                velocityTracker.addMovement(event);
-
-                float translation = event.getY() - mTouchY;
-                translation = boundTranslation(translation);
-
-                mSlidingPanel.setTranslationY(translation);
-                mBottomPanel.setTranslationY(mOpened
-                        ? -(getMeasuredHeight() - mBottomPanelPeekHeight - translation) * mParallaxFactor
-                        : translation * mParallaxFactor);
-
-                if (mWillDrawShadow) {
-                    ViewCompat.postInvalidateOnAnimation(this);
-                }
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                startDragging(event);
+                break;
             }
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            mIsBeingDragged = false;
-            mTouching = false;
+            case MotionEvent.ACTION_MOVE: {
+                if (mTouching) {
+                    velocityTracker.addMovement(event);
 
-            velocityTracker.addMovement(event);
-            velocityTracker.computeCurrentVelocity(1);
-            float velocityY = velocityTracker.getYVelocity();
-            velocityTracker.recycle();
-            velocityTracker = null;
+                    float translation = event.getY() - mTouchY;
+                    translation = boundTranslation(translation);
 
-            finishAnimateToFinalPosition(velocityY);
+                    mSlidingPanel.setTranslationY(translation);
+                    mBottomPanel.setTranslationY(mOpened
+                            ? -(getMeasuredHeight() - mBottomPanelPeekHeight - translation) * mParallaxFactor
+                            : translation * mParallaxFactor);
+
+                    if (mWillDrawShadow) {
+                        ViewCompat.postInvalidateOnAnimation(this);
+                    }
+                }
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                mIsBeingDragged = false;
+                mTouching = false;
+
+                velocityTracker.addMovement(event);
+                velocityTracker.computeCurrentVelocity(1);
+                float velocityY = velocityTracker.getYVelocity();
+                velocityTracker.recycle();
+                velocityTracker = null;
+
+                finishAnimateToFinalPosition(velocityY);
+                break;
+            }
         }
-
         return true;
     }
 

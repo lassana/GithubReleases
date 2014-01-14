@@ -75,6 +75,10 @@ public class GithubProvider extends ContentProvider {
             cv.put(GithubContract.Repositories.OWNER, "lassana");
             cv.put(GithubContract.Repositories.REPOSITORY_NAME, "listview-anim-sorting");
             db.insert(TABLE_REPOSITORIES, null, cv);
+            cv = new ContentValues();
+            cv.put(GithubContract.Repositories.OWNER, "dropbox");
+            cv.put(GithubContract.Repositories.REPOSITORY_NAME, "dropbox-js");
+            db.insert(TABLE_REPOSITORIES, null, cv);
         }
 
         @Override
