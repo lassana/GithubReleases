@@ -15,8 +15,7 @@
         android:id="@android:id/text2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_repository_name"
-        android:layout_marginTop="@dimen/activity_vertical_margin"/>
+        android:hint="@string/hint_repository_name"/>
 
     <View
         android:layout_width="match_parent"
@@ -38,7 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/button_add"
-
             style="?android:attr/buttonBarButtonStyle"
             android:id="@android:id/button1"/>
 

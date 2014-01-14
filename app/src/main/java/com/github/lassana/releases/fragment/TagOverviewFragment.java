@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.lassana.releases.R;
-import com.github.lassana.releases.net.api.Repository;
+import com.github.lassana.releases.net.api.ApiRepository;
 import com.github.lassana.releases.storage.model.GithubContract;
 
 /**
@@ -108,7 +108,7 @@ public class TagOverviewFragment extends DialogFragment {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(new Repository(owner, repositoryName).buildWebUrl()));
+                intent.setData(Uri.parse(new ApiRepository(owner, repositoryName).buildWebUrl()));
                 startActivity(intent);
             }
         });

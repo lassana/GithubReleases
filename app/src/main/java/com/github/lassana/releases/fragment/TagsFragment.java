@@ -22,7 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.github.lassana.releases.R;
 import com.github.lassana.releases.VolleyAppController;
-import com.github.lassana.releases.net.api.Repository;
+import com.github.lassana.releases.net.api.ApiRepository;
 import com.github.lassana.releases.net.model.Tag;
 import com.github.lassana.releases.storage.model.GithubContract;
 import com.github.lassana.releases.view.DraggablePanelLayout;
@@ -171,11 +171,11 @@ public class TagsFragment extends ListFragment {
         String repositoryStr = cursor.getString(repositoryIndex);
         cursor.close();
 
-        Repository repository = new Repository(owner, repositoryStr);
+        ApiRepository apiRepository = new ApiRepository(owner, repositoryStr);
         Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                List<Tag> list = Repository.getTags(response);
+                List<Tag> list = ApiRepository.getTags(response);
                 ContentResolver contentResolver = getActivity().getContentResolver();
                 contentResolver.delete(
                         GithubContract.Tags.CONTENT_URI,
@@ -199,7 +199,7 @@ public class TagsFragment extends ListFragment {
                 Toast.makeText(getActivity(), R.string.toast_bad_repository, Toast.LENGTH_LONG).show();
             }
         };
-        repository.getTags(listener, errorListener, TAG_LOAD_TAGS);
+        apiRepository.getTags(listener, errorListener, TAG_LOAD_TAGS);
     }
 
 }

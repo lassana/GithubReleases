@@ -14,12 +14,12 @@ import java.util.List;
  * @author lassana
  * @since 1/10/14
  */
-public class Repository {
+public class ApiRepository {
 
     private final String mOwner;
     private final String mRepository;
 
-    public Repository(String owner, String repository) {
+    public ApiRepository(String owner, String repository) {
         mOwner = owner;
         mRepository = repository;
     }
