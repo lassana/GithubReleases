@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.os.Parcelable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -102,6 +103,24 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
 
         final ViewConfiguration configuration = ViewConfiguration.get(getContext());
         mTouchSlop = configuration.getScaledTouchSlop();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof DraggablePanelSavedState) {
+            DraggablePanelSavedState savedState = (DraggablePanelSavedState) state;
+            super.onRestoreInstanceState(savedState.getSuperState());
+            mOpened = savedState.isOpened;
+        } else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        DraggablePanelSavedState savedState = new DraggablePanelSavedState(super.onSaveInstanceState());
+        savedState.isOpened = mOpened;
+        return savedState;
     }
 
     @Override
