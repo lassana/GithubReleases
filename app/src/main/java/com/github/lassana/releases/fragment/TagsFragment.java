@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 import android.widget.ViewSwitcher;
 
 import com.android.volley.Response;
@@ -41,7 +42,6 @@ public class TagsFragment extends ListFragment {
     }
 
     private static final int LIST_LOADER_ID = 2;
-    private static final int REPOSITORY_LOADER_ID = 3;
 
     private static final String[] TAGS_PROJECTION = {
             GithubContract.Tags._ID,
@@ -54,13 +54,13 @@ public class TagsFragment extends ListFragment {
             GithubContract.Repositories.REPOSITORY_NAME};
 
     private CursorAdapter mAdapter;
-    private ViewSwitcher mViewSwitcher;
+    private ViewFlipper mViewFlipper;
     private TagsCallback mTagsCallback;
 
     private LoaderManager.LoaderCallbacks<Cursor> listLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            mViewSwitcher.setDisplayedChild(0);
+            mViewFlipper.setDisplayedChild(0);
             return new CursorLoader(
                     getActivity(),
                     GithubContract.Tags.CONTENT_URI,
@@ -74,7 +74,7 @@ public class TagsFragment extends ListFragment {
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
             mAdapter.swapCursor(cursor);
-            mViewSwitcher.setDisplayedChild(1);
+            mViewFlipper.setDisplayedChild(1);
         }
 
         @Override
@@ -114,33 +114,43 @@ public class TagsFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
-        mRepositoryId = bundle.getLong(EXTRA_REPOSITORY_ID);
+        mRepositoryId = bundle == null ? -1 : bundle.getLong(EXTRA_REPOSITORY_ID);
 
-        mViewSwitcher = (ViewSwitcher) view.findViewById(android.R.id.primary);
+        mViewFlipper = (ViewFlipper) view.findViewById(android.R.id.primary);
 
-        mAdapter = new SimpleCursorAdapter(
-                getActivity(),
-                android.R.layout.simple_list_item_1,
-                null,
-                new String[]{GithubContract.Tags.TAG_NAME},
-                new int[]{android.R.id.text1},
-                0);
-        DraggablePanelLayout.enableInternalScrolling(getListView());
-        getListView().setAdapter(mAdapter);
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mTagsCallback.requestTagOverview(id);
-            }
-        });
-        getActivity().getSupportLoaderManager().initLoader(LIST_LOADER_ID, null, listLoaderCallbacks);
-        loadTags();
+        if ( mRepositoryId == -1 ) {
+            mViewFlipper.setDisplayedChild(2);
+        } else {
+            mAdapter = new SimpleCursorAdapter(
+                    getActivity(),
+                    android.R.layout.simple_list_item_1,
+                    null,
+                    new String[]{GithubContract.Tags.TAG_NAME},
+                    new int[]{android.R.id.text1},
+                    0);
+            DraggablePanelLayout.enableInternalScrolling(getListView());
+            getListView().setAdapter(mAdapter);
+            getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mTagsCallback.requestTagOverview(id);
+                }
+            });
+            getActivity().getSupportLoaderManager().initLoader(LIST_LOADER_ID, null, listLoaderCallbacks);
+            loadTags();
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(EXTRA_REPOSITORY_ID, mRepositoryId);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getActivity().getSupportLoaderManager().destroyLoader(LIST_LOADER_ID);
     }
 
     private void loadTags() {

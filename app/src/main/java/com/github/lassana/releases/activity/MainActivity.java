@@ -12,6 +12,8 @@ import com.github.lassana.releases.fragment.TagsFragment;
 public class MainActivity extends ActionBarActivity
         implements RepositoriesFragment.RepositoriesCallback, TagsFragment.TagsCallback {
 
+    private TagsFragment mCurrentContentFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,13 +22,21 @@ public class MainActivity extends ActionBarActivity
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new RepositoriesFragment())
                     .commit();
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.content, new TagsFragment())
+                    .commit();
         }
     }
 
     @Override
     public void requestTags(long repositoryId) {
+        if ( mCurrentContentFragment != null ) {
+            getSupportFragmentManager().beginTransaction().remove(mCurrentContentFragment).commit();
+        }
+        mCurrentContentFragment = TagsFragment.getInstance(repositoryId);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content, TagsFragment.getInstance(repositoryId))
+                .replace(R.id.content, mCurrentContentFragment)
                 .commit();
     }
 
