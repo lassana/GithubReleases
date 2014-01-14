@@ -10,5 +10,9 @@
     <string name="tv_zipball">Zipball: </string>
     <string name="tv_tarball">Tarball: </string>
     <string name="tv_commit">Commit: </string>
+    <string name="title_add_repository">Add repository</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_repository_name">Repository name</string>
+    <string name="button_add">Add</string>
 
 </resources>

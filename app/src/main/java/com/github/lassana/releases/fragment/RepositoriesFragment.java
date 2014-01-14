@@ -86,6 +86,13 @@ public class RepositoriesFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        view.findViewById(android.R.id.button1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestNewRepository();
+            }
+        });
+
         mAdapter = new SimpleCursorAdapter(
                 getActivity(),
                 android.R.layout.simple_list_item_2,
@@ -102,6 +109,11 @@ public class RepositoriesFragment extends ListFragment {
             }
         });
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, loaderCallbacks);
+    }
+
+    private void requestNewRepository() {
+        AddRepositoryFragment fragment = new AddRepositoryFragment();
+        fragment.show(getFragmentManager(), "add_repository");
     }
 
 
