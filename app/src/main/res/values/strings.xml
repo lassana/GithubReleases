@@ -14,5 +14,7 @@
     <string name="hint_username">Username</string>
     <string name="hint_repository_name">Repository name</string>
     <string name="button_add">Add</string>
+    <string name="title_warning">Warning</string>
+    <string name="message_ask_delete">Really delete repository?</string>
 
 </resources>

@@ -108,7 +108,19 @@ public class RepositoriesFragment extends ListFragment {
                 mRepositoriesCallback.requestTags(id);
             }
         });
+        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                requestDeleteRepository(id);
+                return true;
+            }
+        });
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, loaderCallbacks);
+    }
+
+    private void requestDeleteRepository(long id) {
+        DeleteRepositoryFragment fragment = DeleteRepositoryFragment.getInstance(id);
+        fragment.show(getFragmentManager(), "delete_repository");
     }
 
     private void requestNewRepository() {

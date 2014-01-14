@@ -143,10 +143,16 @@ public class GithubProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         switch (sUriMatcher.match(uri)) {
-            case PATH_REPOSITORIES:
-                return mDatabaseHelper.getWritableDatabase().delete(TABLE_REPOSITORIES, selection, selectionArgs);
-            case PATH_TAGS:
-                return mDatabaseHelper.getWritableDatabase().delete(TABLE_TAGS, selection, selectionArgs);
+            case PATH_REPOSITORIES: {
+                int rvalue = mDatabaseHelper.getWritableDatabase().delete(TABLE_REPOSITORIES, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(GithubContract.Repositories.CONTENT_URI, null);
+                return rvalue;
+            }
+            case PATH_TAGS: {
+                int rvalue = mDatabaseHelper.getWritableDatabase().delete(TABLE_TAGS, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(GithubContract.Tags.CONTENT_URI, null);
+                return rvalue;
+            }
             default:
                 return 0;
         }
@@ -155,10 +161,16 @@ public class GithubProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         switch (sUriMatcher.match(uri)) {
-            case PATH_REPOSITORIES:
-                return mDatabaseHelper.getWritableDatabase().update(TABLE_REPOSITORIES, values, selection, selectionArgs);
-            case PATH_TAGS:
-                return mDatabaseHelper.getWritableDatabase().update(TABLE_TAGS, values, selection, selectionArgs);
+            case PATH_REPOSITORIES: {
+                int rvalue =  mDatabaseHelper.getWritableDatabase().update(TABLE_REPOSITORIES, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(GithubContract.Repositories.CONTENT_URI, null);
+                return rvalue;
+            }
+            case PATH_TAGS: {
+                int rvalue = mDatabaseHelper.getWritableDatabase().update(TABLE_TAGS, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(GithubContract.Tags.CONTENT_URI, null);
+                return rvalue;
+            }
             default:
                 return 0;
         }
