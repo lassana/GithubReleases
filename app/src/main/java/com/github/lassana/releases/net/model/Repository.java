@@ -25,4 +25,9 @@ public class Repository {
     public String getDescription() {
         return mDescription;
     }
+
+    @Override
+    public String toString() {
+        return mName + "\n" + mDescription;
+    }
 }

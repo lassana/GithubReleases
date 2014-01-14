@@ -10,21 +10,19 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.SimpleAdapter;
 
 import com.android.volley.Response;
 import com.github.lassana.releases.R;
 import com.github.lassana.releases.VolleyAppController;
+import com.github.lassana.releases.adapter.TwoLineArrayAdapter;
 import com.github.lassana.releases.net.api.ApiUser;
 import com.github.lassana.releases.net.model.Repository;
 import com.github.lassana.releases.storage.model.GithubContract;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author lassana
@@ -137,20 +135,31 @@ public class AddRepositoryFragment extends DialogFragment {
             @Override
             public void onResponse(String s) {
                 List<Repository> list = ApiUser.getRepositories(s);
-                List<Map<String, String>> data = new ArrayList<Map<String, String>>(list.size());
-                for (Repository repository : list) {
-                    Map<String, String> datum = new HashMap<String, String>(2);
-                    datum.put("first", repository.getName());
-                    datum.put("second", repository.getDescription());
-                    data.add(datum);
-                }
-                SimpleAdapter adapter = new SimpleAdapter(getActivity(), data,
-                        android.R.layout.simple_list_item_2,
-                        new String[]{"first", "second"},
-                        new int[]{android.R.id.text1, android.R.id.text2});
-                mRepositoryEditText.setAdapter(adapter);
+                initEditTextAdapter(list);
             }
         }, null, TAG_LOAD_REPOSITORIES);
+    }
+
+    private void initEditTextAdapter(final List<Repository> list) {
+        final TwoLineArrayAdapter<Repository> adapter = new TwoLineArrayAdapter<Repository>
+                (getActivity(), R.layout.list_item_user_repository, list) {
+            @Override
+            public String lineOneText(Repository repository) {
+                return repository.getName();
+            }
+            @Override
+            public String lineTwoText(Repository repository) {
+                return repository.getDescription();
+            }
+        };
+        mRepositoryEditText.setAdapter(adapter);
+        mRepositoryEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Repository repository = adapter.getItem(i);
+                mRepositoryEditText.setText(repository.getName());
+            }
+        });
     }
 
 }

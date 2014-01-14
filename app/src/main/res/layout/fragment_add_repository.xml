@@ -9,12 +9,16 @@
         android:id="@android:id/text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:singleLine="true"
         android:hint="@string/hint_username"/>
 
     <AutoCompleteTextView
         android:id="@android:id/text2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:singleLine="true"
         android:hint="@string/hint_repository_name"/>
 
     <View
