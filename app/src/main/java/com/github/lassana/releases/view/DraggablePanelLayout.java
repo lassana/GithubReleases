@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
@@ -26,11 +25,12 @@ import com.github.lassana.releases.R;
  * @since 1/13/14
  */
 @SuppressWarnings("ConstantConditions")
-public class DraggablePanelLayout extends FrameLayout implements View.OnTouchListener {
+public class DraggablePanelLayout extends FrameLayout
+        implements View.OnTouchListener {
 
     private static final float PARALLAX_FACTOR = 0.2f;
     public static final int DEFAULT_PEEK_HEIGHT = 100;
-    public static final int AUTO_SCROLLING_DURATION = 300;
+    public static final int AUTO_SCROLLING_DURATION = DraggablePanelHelper.DURATION_MEDIUM;
 
     private static DecelerateInterpolator sDecelerator = new DecelerateInterpolator();
 
@@ -43,7 +43,7 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
     private Drawable mShadowDrawable;
     private boolean mPreventTouchEvents;
 
-    private boolean mOpened = false;
+    private boolean mIsSlidingPanelOpened = false;
 
     private float mTouchY;
     private boolean mTouching;
@@ -78,7 +78,7 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
         initAttrs(context, attrs);
     }
 
-    public void initAttrs(Context context, AttributeSet attrs) {
+    protected final void initAttrs(Context context, AttributeSet attrs) {
         TypedArray array = context.getTheme().obtainStyledAttributes(attrs, R.styleable.DraggablePanelLayout, 0, 0);
 
         try {
@@ -110,7 +110,7 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
         if (state instanceof DraggablePanelSavedState) {
             DraggablePanelSavedState savedState = (DraggablePanelSavedState) state;
             super.onRestoreInstanceState(savedState.getSuperState());
-            mOpened = savedState.isOpened;
+            mIsSlidingPanelOpened = savedState.isOpened;
         } else {
             super.onRestoreInstanceState(state);
         }
@@ -119,8 +119,34 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
     @Override
     protected Parcelable onSaveInstanceState() {
         DraggablePanelSavedState savedState = new DraggablePanelSavedState(super.onSaveInstanceState());
-        savedState.isOpened = mOpened;
+        savedState.isOpened = mIsSlidingPanelOpened;
         return savedState;
+    }
+
+    public boolean isSlidingPanelOpened() {
+        return mIsSlidingPanelOpened;
+    }
+
+    public void switchState() {
+        if ( mAnimating ) return;
+        if (mIsSlidingPanelOpened) {
+            openBottomPanel();
+        } else {
+            closeBottomPanel();
+        }
+    }
+
+    public void closeBottomPanel() {
+        if ( mAnimating ) return;
+        animatePanel(true, calculateDistance(true), AUTO_SCROLLING_DURATION);
+    }
+
+    public void openBottomPanel() {
+        if ( mAnimating ) return;
+        mBottomPanel.setVisibility(View.VISIBLE);
+        mBottomPanel.setTranslationY(-(getMeasuredHeight() - mBottomPanelPeekHeight) * mParallaxFactor);
+        allowShadow();
+        animatePanel(false, calculateDistance(false), AUTO_SCROLLING_DURATION);
     }
 
     @Override
@@ -150,7 +176,7 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
         mBottomPanel.layout(left, top, right, bottom - mBottomPanelPeekHeight);
 
         mSlidingPanel = getChildAt(1);
-        if (!mOpened) {
+        if (!mIsSlidingPanelOpened) {
             int panelMeasuredHeight = mSlidingPanel.getMeasuredHeight();
             mSlidingPanel.layout(
                     left,
@@ -184,7 +210,7 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
         return mIsBeingDragged;
     }
 
-    public void startDragging(MotionEvent event) {
+    protected void startDragging(MotionEvent event) {
         mTouchY = event.getY();
         mTouching = true;
 
@@ -212,7 +238,7 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
                     translation = boundTranslation(translation);
 
                     mSlidingPanel.setTranslationY(translation);
-                    mBottomPanel.setTranslationY(mOpened
+                    mBottomPanel.setTranslationY(mIsSlidingPanelOpened
                             ? -(getMeasuredHeight() - mBottomPanelPeekHeight - translation) * mParallaxFactor
                             : translation * mParallaxFactor);
 
@@ -239,8 +265,8 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
         return true;
     }
 
-    public float boundTranslation(float translation) {
-        if (!mOpened) {
+    protected float boundTranslation(float translation) {
+        if (!mIsSlidingPanelOpened) {
             if (translation > 0) {
                 translation = 0;
             }
@@ -258,13 +284,13 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
         return translation;
     }
 
-    public void obtainVelocityTracker() {
+    protected void obtainVelocityTracker() {
         if (velocityTracker == null) {
             velocityTracker = VelocityTracker.obtain();
         }
     }
 
-    public void finishAnimateToFinalPosition(float velocityY) {
+    protected void finishAnimateToFinalPosition(float velocityY) {
         final boolean flinging = Math.abs(velocityY) > 0.5;
 
         boolean opening;
@@ -286,7 +312,7 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
             // traveled and based on that complete the motion
 
             boolean halfway = Math.abs(mSlidingPanel.getTranslationY()) >= (getMeasuredHeight() - mBottomPanelPeekHeight) / 2;
-            opening = mOpened ? !halfway : halfway;
+            opening = mIsSlidingPanelOpened ? !halfway : halfway;
 
             distY = calculateDistance(opening);
             duration = Math.round(AUTO_SCROLLING_DURATION * Math.abs((double) mSlidingPanel.getTranslationY()) / (double) (getMeasuredHeight() - mBottomPanelPeekHeight));
@@ -295,9 +321,9 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
         animatePanel(opening, distY, duration);
     }
 
-    public float calculateDistance(boolean opening) {
+    protected float calculateDistance(boolean opening) {
         float distY;
-        if (mOpened) {
+        if (mIsSlidingPanelOpened) {
             distY = opening
                     ? -mSlidingPanel.getTranslationY()
                     : getMeasuredHeight() - mBottomPanelPeekHeight - mSlidingPanel.getTranslationY();
@@ -310,7 +336,7 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
         return distY;
     }
 
-    public void animatePanel(final boolean opening, float distY, long duration) {
+    protected void animatePanel(final boolean opening, float distY, long duration) {
         ObjectAnimator slidingPanelAnimator = ObjectAnimator.ofFloat(mSlidingPanel, View.TRANSLATION_Y, mSlidingPanel.getTranslationY(), mSlidingPanel.getTranslationY() + distY);
         ObjectAnimator bottomPanelAnimator = ObjectAnimator.ofFloat(mBottomPanel, View.TRANSLATION_Y, mBottomPanel.getTranslationY(), mBottomPanel.getTranslationY() + (distY * mParallaxFactor));
 
@@ -370,24 +396,23 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
 
             requestLayout();
 
+            mAnimating = false;
             if (mWillDrawShadow) {
-                mAnimating = false;
                 ViewCompat.postInvalidateOnAnimation(DraggablePanelLayout.this);
             }
         }
 
         @Override
         public void onAnimationCancel(Animator animation) {
+            mAnimating = false;
             if (mWillDrawShadow) {
-                mAnimating = false;
                 ViewCompat.postInvalidateOnAnimation(DraggablePanelLayout.this);
             }
         }
-
     }
 
     private void setOpenedState(boolean opened) {
-        this.mOpened = opened;
+        this.mIsSlidingPanelOpened = opened;
         mBottomPanel.setVisibility(opened ? View.GONE : View.VISIBLE);
         hideShadowIfNotNeeded();
     }
@@ -398,28 +423,8 @@ public class DraggablePanelLayout extends FrameLayout implements View.OnTouchLis
     }
 
     private void hideShadowIfNotNeeded() {
-        mWillDrawShadow = mShadowDrawable != null && !mOpened;
+        mWillDrawShadow = mShadowDrawable != null && !mIsSlidingPanelOpened;
         setWillNotDraw(!mWillDrawShadow);
-    }
-
-    public static void enableInternalScrolling(final ViewGroup viewGroup) {
-        viewGroup.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        viewGroup.requestDisallowInterceptTouchEvent(true);
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                    case MotionEvent.ACTION_UP:
-                        viewGroup.requestDisallowInterceptTouchEvent(false);
-                        break;
-                    default:
-                        break;
-                }
-                return false;
-            }
-        });
     }
 
 }

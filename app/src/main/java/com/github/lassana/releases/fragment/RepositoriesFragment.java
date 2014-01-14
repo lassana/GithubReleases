@@ -16,7 +16,7 @@ import android.widget.AdapterView;
 
 import com.github.lassana.releases.R;
 import com.github.lassana.releases.storage.model.GithubContract;
-import com.github.lassana.releases.view.DraggablePanelLayout;
+import com.github.lassana.releases.view.DraggablePanelHelper;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -26,7 +26,8 @@ public class RepositoriesFragment extends ListFragment {
     private static final String TAG = "MainFragment";
 
     public static interface RepositoriesCallback {
-        void requestTags(long repositoryId);
+        void onRepositoryTagsRequested(long repositoryId);
+        void onNewRepositoryRequested();
     }
 
     private static final int LOADER_ID = 1;
@@ -100,12 +101,12 @@ public class RepositoriesFragment extends ListFragment {
                 new String[]{GithubContract.Repositories.REPOSITORY_NAME, GithubContract.Repositories.OWNER},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 0);
-        DraggablePanelLayout.enableInternalScrolling(getListView());
+        DraggablePanelHelper.enableInternalScrolling(getListView());
         getListView().setAdapter(mAdapter);
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mRepositoriesCallback.requestTags(id);
+                mRepositoriesCallback.onRepositoryTagsRequested(id);
             }
         });
         getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -124,6 +125,7 @@ public class RepositoriesFragment extends ListFragment {
     }
 
     private void requestNewRepository() {
+        mRepositoriesCallback.onNewRepositoryRequested();
         AddRepositoryFragment fragment = new AddRepositoryFragment();
         fragment.show(getFragmentManager(), "add_repository");
     }

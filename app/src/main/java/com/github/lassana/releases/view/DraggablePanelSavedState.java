@@ -8,7 +8,7 @@ import android.preference.Preference;
  * @author lassana
  * @since 1/14/14
  */
-public class DraggablePanelSavedState extends Preference.BaseSavedState {
+class DraggablePanelSavedState extends Preference.BaseSavedState {
 
     protected boolean isOpened;
 

@@ -16,5 +16,6 @@
     <string name="button_add">Add</string>
     <string name="title_warning">Warning</string>
     <string name="message_ask_delete">Really delete repository?</string>
+    <string name="tv_select_repository">↓ Select repository ↓</string>
 
 </resources>

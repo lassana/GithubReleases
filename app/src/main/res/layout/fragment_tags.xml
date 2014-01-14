@@ -26,6 +26,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_gravity="center"
-        android:text="Select repository"/>
+        android:text="@string/tv_select_repository"/>
 
 </ViewFlipper>

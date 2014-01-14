@@ -25,7 +25,7 @@ import com.github.lassana.releases.VolleyAppController;
 import com.github.lassana.releases.net.api.ApiRepository;
 import com.github.lassana.releases.net.model.Tag;
 import com.github.lassana.releases.storage.model.GithubContract;
-import com.github.lassana.releases.view.DraggablePanelLayout;
+import com.github.lassana.releases.view.DraggablePanelHelper;
 
 import java.util.List;
 
@@ -129,7 +129,7 @@ public class TagsFragment extends ListFragment {
                     new String[]{GithubContract.Tags.TAG_NAME},
                     new int[]{android.R.id.text1},
                     0);
-            DraggablePanelLayout.enableInternalScrolling(getListView());
+            DraggablePanelHelper.enableInternalScrolling(getListView());
             getListView().setAdapter(mAdapter);
             getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
