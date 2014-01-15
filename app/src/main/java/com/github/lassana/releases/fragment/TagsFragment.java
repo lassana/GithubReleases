@@ -40,10 +40,10 @@ public class TagsFragment extends ListFragment {
 
     public static interface TagsCallback {
         void onTagOverviewRequested(long tagId);
-        void onTagsLoadingStarted();
     }
 
     private static final int LIST_LOADER_ID = 2;
+    private static final int REPOSITORY_INFO_LOADER_ID = 3;
 
     private static final String[] TAGS_PROJECTION = {
             GithubContract.Tags._ID,
@@ -63,7 +63,6 @@ public class TagsFragment extends ListFragment {
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
             mViewFlipper.setDisplayedChild(0);
-            mTagsCallback.onTagsLoadingStarted();
             return new CursorLoader(
                     getActivity(),
                     GithubContract.Tags.CONTENT_URI,
@@ -121,7 +120,7 @@ public class TagsFragment extends ListFragment {
 
         mViewFlipper = (ViewFlipper) view.findViewById(android.R.id.primary);
 
-        if ( mRepositoryId == -1 ) {
+        if (mRepositoryId == -1) {
             mViewFlipper.setDisplayedChild(2);
         } else {
             mAdapter = new SimpleCursorAdapter(
@@ -140,7 +139,6 @@ public class TagsFragment extends ListFragment {
                 }
             });
             getActivity().getSupportLoaderManager().initLoader(LIST_LOADER_ID, null, listLoaderCallbacks);
-            loadTags();
         }
     }
 
@@ -154,25 +152,47 @@ public class TagsFragment extends ListFragment {
     public void onDestroyView() {
         super.onDestroyView();
         getActivity().getSupportLoaderManager().destroyLoader(LIST_LOADER_ID);
+        getActivity().getSupportLoaderManager().destroyLoader(REPOSITORY_INFO_LOADER_ID);
         VolleyAppController.getInstance().cancelPendingRequest(TAG_LOAD_TAGS);
     }
 
-    private void loadTags() {
-        CursorLoader loader = new CursorLoader(
-                getActivity(),
-                GithubContract.Repositories.CONTENT_URI,
-                REPOSITORY_PROJECTION,
-                GithubContract.Repositories._ID + " = ?",
-                new String[]{Long.toString(mRepositoryId)},
-                null);
-        Cursor cursor = loader.loadInBackground();
-        cursor.moveToFirst();
-        int ownerIndex = cursor.getColumnIndex(GithubContract.Repositories.OWNER);
-        int repositoryIndex = cursor.getColumnIndex(GithubContract.Repositories.REPOSITORY_NAME);
-        String owner = cursor.getString(ownerIndex);
-        String repositoryStr = cursor.getString(repositoryIndex);
-        cursor.close();
+    public void updateTags() {
+        LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+            @Override
+            public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+                return new CursorLoader(
+                        getActivity(),
+                        GithubContract.Repositories.CONTENT_URI,
+                        REPOSITORY_PROJECTION,
+                        GithubContract.Repositories._ID + " = ?",
+                        new String[]{Long.toString(mRepositoryId)},
+                        null);
+            }
 
+            @Override
+            public void onLoadFinished(Loader<Cursor> objectLoader, Cursor cursor) {
+                if (cursor.moveToFirst()) {
+                    int ownerIndex = cursor.getColumnIndex(GithubContract.Repositories.OWNER);
+                    int repositoryIndex = cursor.getColumnIndex(GithubContract.Repositories.REPOSITORY_NAME);
+                    String owner = cursor.getString(ownerIndex);
+                    String repositoryStr = cursor.getString(repositoryIndex);
+                    cursor.close();
+                    loadTagsFromGithub(owner, repositoryStr);
+                }
+            }
+
+            @Override
+            public void onLoaderReset(Loader<Cursor> objectLoader) {
+
+            }
+        };
+        getActivity().getSupportLoaderManager().initLoader(
+                REPOSITORY_INFO_LOADER_ID,
+                null,
+                loaderCallbacks);
+    }
+
+    private void loadTagsFromGithub(String owner, String repositoryStr) {
         ApiRepository apiRepository = new ApiRepository(owner, repositoryStr);
         Response.Listener<String> listener = new Response.Listener<String>() {
             @Override

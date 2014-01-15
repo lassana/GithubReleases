@@ -26,7 +26,7 @@ import com.github.lassana.releases.R;
  */
 @SuppressWarnings("ConstantConditions")
 public class DraggablePanelLayout extends FrameLayout
-        implements View.OnTouchListener {
+        implements View.OnTouchListener, DraggablePanel {
 
     private static final float PARALLAX_FACTOR = 0.2f;
     public static final int DEFAULT_PEEK_HEIGHT = 100;
@@ -35,6 +35,8 @@ public class DraggablePanelLayout extends FrameLayout
     private static DecelerateInterpolator sDecelerator = new DecelerateInterpolator();
 
     private float mParallaxFactor;
+
+    private DraggablePanelListener mPanelListener;
 
     private View mBottomPanel;
     private View mSlidingPanel;
@@ -123,10 +125,22 @@ public class DraggablePanelLayout extends FrameLayout
         return savedState;
     }
 
+    @Override
+    public void setPanelListener(DraggablePanelListener panelListener) {
+        mPanelListener = panelListener;
+    }
+
+    @Override
     public boolean isSlidingPanelOpened() {
         return mIsSlidingPanelOpened;
     }
 
+    @Override
+    public boolean isBottomPanelOpened() {
+        return !mIsSlidingPanelOpened;
+    }
+
+    @Override
     public void switchState() {
         if ( mAnimating ) return;
         if (mIsSlidingPanelOpened) {
@@ -136,11 +150,13 @@ public class DraggablePanelLayout extends FrameLayout
         }
     }
 
+    @Override
     public void closeBottomPanel() {
         if ( mAnimating ) return;
         animatePanel(true, calculateDistance(true), AUTO_SCROLLING_DURATION);
     }
 
+    @Override
     public void openBottomPanel() {
         if ( mAnimating ) return;
         mBottomPanel.setVisibility(View.VISIBLE);
@@ -387,6 +403,14 @@ public class DraggablePanelLayout extends FrameLayout
         @Override
         public void onAnimationEnd(Animator animation) {
             setOpenedState(opening);
+
+            if ( mPanelListener != null ) {
+                if ( opening ) {
+                    mPanelListener.onBottomPanelClosed();
+                } else {
+                    mPanelListener.onBottomPanelOpened();
+                }
+            }
 
             mBottomPanel.setTranslationY(0);
             mSlidingPanel.setTranslationY(0);
