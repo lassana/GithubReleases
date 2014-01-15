@@ -17,8 +17,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <!-- @android:color/background_holo_light -->
     <FrameLayout
         android:id="@+id/container"
+        android:background="#fff3f3f3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
