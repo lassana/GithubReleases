@@ -53,7 +53,6 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onRepositoryTagsRequested(long repositoryId) {
-        mPanelLayout.openBottomPanel();
         if ( mCurrentContentFragment != null ) {
             getSupportFragmentManager().beginTransaction().remove(mCurrentContentFragment).commit();
         }
@@ -61,6 +60,12 @@ public class MainActivity extends ActionBarActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content, mCurrentContentFragment)
                 .commit();
+        new Runnable() {
+            @Override
+            public void run() {
+                mPanelLayout.openBottomPanel();
+            }
+        }.run();
     }
 
     @Override
@@ -69,8 +74,13 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public void requestTagOverview(long tagId) {
+    public void onTagOverviewRequested(long tagId) {
         DialogFragment fragment = TagOverviewFragment.getInstance(tagId);
         fragment.show(getSupportFragmentManager(), Long.toString(tagId));
+    }
+
+    @Override
+    public void onTagsLoadingStarted() {
+
     }
 }

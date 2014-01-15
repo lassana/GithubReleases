@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:singleLine="true"
+        android:completionThreshold="1"
         android:hint="@string/hint_repository_name"/>
 
     <View

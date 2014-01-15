@@ -39,7 +39,8 @@ public class TagsFragment extends ListFragment {
     private static final String TAG_LOAD_TAGS = "tag_load_tags";
 
     public static interface TagsCallback {
-        void requestTagOverview(long tagId);
+        void onTagOverviewRequested(long tagId);
+        void onTagsLoadingStarted();
     }
 
     private static final int LIST_LOADER_ID = 2;
@@ -62,6 +63,7 @@ public class TagsFragment extends ListFragment {
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
             mViewFlipper.setDisplayedChild(0);
+            mTagsCallback.onTagsLoadingStarted();
             return new CursorLoader(
                     getActivity(),
                     GithubContract.Tags.CONTENT_URI,
@@ -134,7 +136,7 @@ public class TagsFragment extends ListFragment {
             getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mTagsCallback.requestTagOverview(id);
+                    mTagsCallback.onTagOverviewRequested(id);
                 }
             });
             getActivity().getSupportLoaderManager().initLoader(LIST_LOADER_ID, null, listLoaderCallbacks);
