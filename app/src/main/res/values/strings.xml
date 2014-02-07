@@ -17,5 +17,7 @@
     <string name="title_warning">Warning</string>
     <string name="message_ask_delete">Really delete repository?</string>
     <string name="tv_select_repository">↓ Select repository ↓</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_open">Open</string>
 
 </resources>

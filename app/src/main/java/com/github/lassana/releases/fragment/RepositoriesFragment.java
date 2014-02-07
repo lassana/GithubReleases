@@ -8,20 +8,22 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.github.lassana.releases.R;
+import com.github.lassana.releases.adapter.RepositoriesAdapter;
 import com.github.lassana.releases.storage.model.GithubContract;
 import com.github.lassana.releases.view.DraggablePanelHelper;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class RepositoriesFragment extends ListFragment {
+public class RepositoriesFragment extends ListFragment
+        implements RepositoriesAdapter.RepositoriesAdapterCallback {
 
     private static final String TAG = "MainFragment";
 
@@ -39,7 +41,7 @@ public class RepositoriesFragment extends ListFragment {
 
     private RepositoriesCallback mRepositoriesCallback;
 
-    private CursorAdapter mAdapter;
+    private RepositoriesAdapter mAdapter;
 
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
@@ -94,32 +96,21 @@ public class RepositoriesFragment extends ListFragment {
             }
         });
 
-        mAdapter = new SimpleCursorAdapter(
-                getActivity(),
-                android.R.layout.simple_list_item_2,
-                null,
-                new String[]{GithubContract.Repositories.REPOSITORY_NAME, GithubContract.Repositories.OWNER},
-                new int[]{android.R.id.text1, android.R.id.text2},
-                0);
+        mAdapter = new RepositoriesAdapter(getActivity(), this);
         DraggablePanelHelper.enableInternalScrolling(getListView());
         getListView().setAdapter(mAdapter);
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mRepositoriesCallback.onRepositoryTagsRequested(id);
-            }
-        });
-        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                requestDeleteRepository(id);
-                return true;
-            }
-        });
+        getListView().setOnItemClickListener(mAdapter);
+        getListView().setOnItemLongClickListener(mAdapter);
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, loaderCallbacks);
     }
 
-    private void requestDeleteRepository(long id) {
+    @Override
+    public void requestOpenRepository(long id) {
+        mRepositoriesCallback.onRepositoryTagsRequested(id);
+    }
+
+    @Override
+    public void requestDeleteRepository(long id) {
         DeleteRepositoryFragment fragment = DeleteRepositoryFragment.getInstance(id);
         fragment.show(getFragmentManager(), "delete_repository");
     }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <include
+        android:id="@android:id/primary"
+        android:focusable="false"
+        layout="@android:layout/simple_list_item_2"/>
+
+    <View
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:visibility="gone"
+        android:background="?android:attr/listDivider"/>
+
+    <LinearLayout
+        android:id="@android:id/content"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        style="?attr/buttonBarStyle"
+        android:weightSum="2">
+
+        <Button
+            android:id="@android:id/button1"
+            android:text="@string/button_delete"
+            android:focusable="false"
+            style="?attr/buttonBarButtonStyle"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@android:id/button2"
+            android:text="@string/button_open"
+            android:focusable="false"
+            style="?attr/buttonBarButtonStyle"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</LinearLayout>
