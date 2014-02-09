@@ -1,5 +1,6 @@
 package com.github.lassana.releases.activity;
 
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -61,7 +62,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
-            mDraggablePanel.switchState();
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         } else {
             return super.onOptionsItemSelected(item);
