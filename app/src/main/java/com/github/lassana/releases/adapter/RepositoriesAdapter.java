@@ -58,20 +58,17 @@ public class RepositoriesAdapter extends SimpleCursorAdapter
     }
 
     private void toggleContentView(View itemRoot) {
-        if ( mLastExpandedRootView != null) {
-            View previous = mLastExpandedRootView;
+        if ( mLastExpandedRootView != null && mLastExpandedRootView != itemRoot ) {
+            View tmp = mLastExpandedRootView;
             mLastExpandedRootView = null;
-            toggleContentView(previous);
+            toggleContentView(tmp);
         }
         View toExpand = itemRoot.findViewById(android.R.id.content);
-        View divider = itemRoot.findViewById(android.R.id.empty);
         if (toExpand.getVisibility() == View.VISIBLE) {
             toExpand.setVisibility(View.GONE);
-            divider.setVisibility(View.GONE);
             mLastExpandedRootView = null;
         } else {
             toExpand.setVisibility(View.VISIBLE);
-            divider.setVisibility(View.VISIBLE);
             mLastExpandedRootView = itemRoot;
         }
     }
