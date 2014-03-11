@@ -20,7 +20,7 @@
     <string name="button_delete">Delete</string>
     <string name="button_open">Open</string>
     <string name="preference_general">General</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="preference_goto_github">Go to Github</string>
     <string name="preference_goto_github_summ">Open browser</string>

@@ -5,7 +5,9 @@
     android:id="@android:id/primary"
     android:measureAllChildren="false"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:inAnimation="@android:anim/fade_in"
+    android:outAnimation="@android:anim/fade_out">
 
     <ProgressBar
         android:layout_gravity="center"
