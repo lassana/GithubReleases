@@ -1,7 +1,7 @@
 Github Releases
 =============
 
-A little app to track releases/tags on github repositories.
+A little app designed to keep track tags in Github repositories.
 
 Contains a smooth [draggable panel layout](app/src/main/java/com/github/lassana/releases/view): thanks to the TheHiddenDuck's [project](https://github.com/TheHiddenDuck/draggable-panel-layout)
 
